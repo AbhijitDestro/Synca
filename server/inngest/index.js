@@ -1,4 +1,5 @@
 import { Inngest } from "inngest";
+import prisma from "../configs/prisma.js";
 
 export const inngest = new Inngest({ id: "synca", name: "Synca" });
 
@@ -7,14 +8,19 @@ const syncUserCreation = inngest.createFunction(
   { event: "clerk/user.created" },
   async ({ event }) => {
     const { data } = event
-    await prisma.user.create({
-      data: {
-        id: data.id,
-        email: data?.email_addresses[0]?.email_address,
-        name: data?.first_name + " " + data?.last_name,
-        image: data?.image_url,
-      },
-    });
+    try {
+      await prisma.user.create({
+        data: {
+          id: data.id,
+          email: data?.email_addresses[0]?.email_address,
+          name: data?.first_name + " " + data?.last_name,
+          image: data?.image_url,
+        },
+      });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 );
 
@@ -23,11 +29,16 @@ const syncUserDeletion = inngest.createFunction(
   { event: "clerk/user.deleted" },
   async ({ event }) => {
     const { data } = event;
-    await prisma.user.delete({
-      where: {
-        id: data.id,
-      },
-    });
+    try {
+      await prisma.user.delete({
+        where: {
+          id: data.id,
+        },
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   }
 );
 
@@ -36,16 +47,21 @@ const syncUserUpdation = inngest.createFunction(
   { event: "clerk/user.updated" },
   async ({ event }) => {
     const { data } = event;
-    await prisma.user.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        email: data?.email_addresses[0]?.email_address,
-        name: data?.first_name + " " + data?.last_name,
-        image: data?.image_url,
-      },
-    });
+    try {
+      await prisma.user.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          email: data?.email_addresses[0]?.email_address,
+          name: data?.first_name + " " + data?.last_name,
+          image: data?.image_url,
+        },
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
   }
 );
 
