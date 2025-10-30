@@ -1,20 +1,8 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SignInButton, SignUpButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-
-  const handleSignUp = () => {
-    // For now, we'll just navigate to dashboard
-    // In a real app, you would show a signup form
-    navigate('dashboard');
-  };
-
-  const handleSignIn = () => {
-    // For now, we'll just navigate to dashboard
-    // In a real app, you would show a signin form
-    navigate('dashboard');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-zinc-800 flex flex-col items-center justify-center p-4">
@@ -29,25 +17,37 @@ const LandingPage = () => {
         </div>
         
         <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg p-8 space-y-6">
-          <div className="space-y-4">
-            <button
-              onClick={handleSignUp}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              Sign Up
-            </button>
+          <SignedOut>
+            <div className="space-y-4">
+              <SignUpButton mode="modal">
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                  Sign Up
+                </button>
+              </SignUpButton>
+              
+              <SignInButton mode="modal">
+                <button className="w-full bg-white dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                  Sign In
+                </button>
+              </SignInButton>
+            </div>
             
-            <button
-              onClick={handleSignIn}
-              className="w-full bg-white dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              Sign In
-            </button>
-          </div>
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+              <p>By signing up, you agree to our Terms of Service and Privacy Policy</p>
+            </div>
+          </SignedOut>
           
-          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>By signing up, you agree to our Terms of Service and Privacy Policy</p>
-          </div>
+          <SignedIn>
+            <div className="text-center space-y-4">
+              <p className="text-gray-600 dark:text-gray-300">Welcome back! You are already signed in.</p>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Go to Dashboard
+              </button>
+            </div>
+          </SignedIn>
         </div>
         
         <div className="text-center text-gray-600 dark:text-gray-400 text-sm">
