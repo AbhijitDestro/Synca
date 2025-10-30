@@ -6,7 +6,7 @@ const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    const { data } = event;
+    const { data } = event
     await prisma.user.create({
       data: {
         id: data.id,
