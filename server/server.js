@@ -6,6 +6,10 @@ import {serve} from "inngest/express"
 import {inngest,functions} from "./inngest/index.js"
 import requireAuth from "./middleware/authMiddleware.js"
 import workspaceRouter from "./routes/workspaceRoutes.js"
+import projectRouter from "./routes/projectRoutes.js"
+import taskRouter from "./routes/taskRoutes.js"
+import commentRouter from "./routes/commentRoutes.js"
+
 
 const app=express()
 
@@ -16,6 +20,9 @@ app.use(clerkMiddleware())
 app.get("/",(req,res)=>{res.send("<h1>Server is live!!</h1>")})
 app.use("/api/inngest",serve({client:inngest,functions}))
 app.use("/api/workspaces",requireAuth, workspaceRouter)
+app.use("/api/projects",requireAuth, projectRouter)
+app.use("/api/tasks",requireAuth,taskRouter) 
+app.use("/api/comments",requireAuth,commentRouter)   
 
 // Error handling middleware
 app.use((err, req, res, next) => {
