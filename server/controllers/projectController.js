@@ -2,7 +2,7 @@ import prisma from "../configs/prisma.js"
 
 export const createProject=async(req,res)=>{
     try{
-      const {userId}=req.auth || {}
+      const {userId}=req.auth() || {}
       const {workspaceId,description,name,status,start_date,end_date,team_members,team_lead,progress,priority}=req.body
 
       const workspace=await prisma.workspace.findUnique({
@@ -75,7 +75,7 @@ export const createProject=async(req,res)=>{
 
 export const updateProject=async(req,res)=>{
     try{
-     const {userId}=req.auth || {}
+     const {userId}=req.auth() || {}
      const {id,workspaceId,description,name,status,start_date,end_date,team_members,team_lead,progress,priority}=req.body
 
      const workspace =await prisma.workspace.findUnique({
@@ -132,7 +132,7 @@ export const updateProject=async(req,res)=>{
 
 export const addMember=async(req,res)=>{
     try{
-        const {userId}=req.auth || {}
+        const {userId}=req.auth() || {}
         const {email}=req.body
         const {projectId}=req.params
         const project = await prisma.project.findUnique({

@@ -2,13 +2,20 @@ import { useState } from "react";
 import { Mail, UserPlus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { useDispatch } from "react-redux";
+import api from "../configs/api";
+import toast from "react-hot-toast"
+import { fetchWorkspaces } from "../features/workspaceSlice";
 
 const AddProjectMember = ({ isDialogOpen, setIsDialogOpen }) => {
 
     const [searchParams] = useSearchParams();
 
     const id = searchParams.get('id');
-
+    const {getToken}=useAuth()
+    const dispatch=useDispatch()
+    
     const currentWorkspace = useSelector((state) => state.workspace?.currentWorkspace || null);
 
     const project = currentWorkspace?.projects.find((p) => p.id === id);
@@ -19,7 +26,21 @@ const AddProjectMember = ({ isDialogOpen, setIsDialogOpen }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        if (!project?.id) {
+            toast.error("Project not found");
+            return;
+        }
+        setIsAdding(true)
+        try{
+             await api.post(`/api/projects/${project.id}/addMember`, {email},{headers:{"Authorization":`Bearer ${await getToken()}`}})
+             toast.success("Member added successfully")
+             setIsDialogOpen(false)
+             dispatch(fetchWorkspaces({getToken}))
+        }catch(error){
+            toast.error(error.response?.data?.message || error.message)
+        } finally{
+            setIsAdding(false)
+        }
     };
 
     if (!isDialogOpen) return null;
@@ -32,7 +53,7 @@ const AddProjectMember = ({ isDialogOpen, setIsDialogOpen }) => {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         <UserPlus className="size-5 text-zinc-900 dark:text-zinc-200" /> Add Member to Project
                     </h2>
-                    {currentWorkspace && (
+                    {currentWorkspace && project && (
                         <p className="text-sm text-zinc-700 dark:text-zinc-400">
                             Adding to Project: <span className="text-blue-600 dark:text-blue-400">{project.name}</span>
                         </p>

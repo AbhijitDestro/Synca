@@ -2,7 +2,7 @@ import prisma from "../configs/prisma.js"
 
 export const addComment=async(req,res)=>{
     try{
-        const {userId}=req.auth || {}
+        const {userId}=req.auth() || {}
         const {projectId,taskId,content}=req.body
         const task=await prisma.task.findUnique({
           where:{id:taskId},

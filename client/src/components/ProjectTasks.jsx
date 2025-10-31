@@ -5,6 +5,9 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteTask, updateTask } from "../features/workspaceSlice";
 import { Bug, CalendarIcon, GitCommit, MessageSquare, Square, Trash, XIcon, Zap } from "lucide-react";
+import api from "../configs/api";
+import { useAuth } from "@clerk/clerk-react";
+
 
 const typeIcons = {
     BUG: { icon: Bug, color: "text-red-600 dark:text-red-400" },
@@ -21,6 +24,7 @@ const priorityTexts = {
 };
 
 const ProjectTasks = ({ tasks }) => {
+    const {getToken}=useAuth()
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [selectedTasks, setSelectedTasks] = useState([]);
@@ -57,9 +61,13 @@ const ProjectTasks = ({ tasks }) => {
     const handleStatusChange = async (taskId, newStatus) => {
         try {
             toast.loading("Updating status...");
-
-            //  Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            const token = await getToken();
+            
+            await api.put(
+                `/api/tasks/${taskId}`,
+                { status: newStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
             let updatedTask = structuredClone(tasks.find((t) => t.id === taskId));
             updatedTask.status = newStatus;
@@ -77,13 +85,15 @@ const ProjectTasks = ({ tasks }) => {
         try {
             const confirm = window.confirm("Are you sure you want to delete the selected tasks?");
             if (!confirm) return;
-
+            const token = await getToken();
             toast.loading("Deleting tasks...");
-
-            //  Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            
+            await api.delete(`/api/tasks/delete`,{data: {tasksIds:selectedTasks}, headers:{"Authorization":`Bearer ${token}`}})
 
             dispatch(deleteTask(selectedTasks));
+            setSelectedTasks([]); // Clear selection after deletion
+
+
 
             toast.dismissAll();
             toast.success("Tasks deleted successfully");
@@ -173,7 +183,7 @@ const ProjectTasks = ({ tasks }) => {
                                         const { background, prioritycolor } = priorityTexts[task.priority] || {};
 
                                         return (
-                                            <tr key={task.id} onClick={() => navigate(`../taskDetails?projectId=${task.projectId}&taskId=${task.id}`)} className=" border-t border-zinc-300 dark:border-zinc-800 group hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all cursor-pointer" >
+                                            <tr key={task.id} onClick={() => navigate(`../taskDetails?projectId=${task?.projectId}&taskId=${task?.id}`)} className=" border-t border-zinc-300 dark:border-zinc-800 group hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all cursor-pointer" >
                                                 <td onClick={e => e.stopPropagation()} className="pl-2 pr-1">
                                                     <input type="checkbox" className="size-3 accent-zinc-600 dark:accent-zinc-500" onChange={() => selectedTasks.includes(task.id) ? setSelectedTasks(selectedTasks.filter((i) => i !== task.id)) : setSelectedTasks((prev) => [...prev, task.id])} checked={selectedTasks.includes(task.id)} />
                                                 </td>

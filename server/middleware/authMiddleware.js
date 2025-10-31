@@ -1,7 +1,7 @@
 export const requireAuth = async (req, res, next) => {
   try {
     // Get the user from Clerk
-    const { userId } = req.auth;
+    const { userId } = req.auth();
     
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });

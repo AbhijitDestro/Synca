@@ -3,7 +3,7 @@ import prisma from "../configs/prisma.js"
 
 export const createTask=async(req,res)=>{
     try{
-        const {userId}=req.auth || {}
+        const {userId}=req.auth() || {}
         const {projectId,title,description,type,status,priority,assigneeId,due_date}=req.body
         const origin=res.get('origin')
 
@@ -62,7 +62,7 @@ export const updateTask=async(req,res)=>{
       if(!task){
         return res.status(404).json({message:"Task not found"})
       }
-        const {userId}=req.auth || {}
+        const {userId}=req.auth() || {}
 
         const project=await prisma.project.findUnique({
           where:{id:task.projectId},
@@ -89,7 +89,7 @@ export const updateTask=async(req,res)=>{
 
 export const deleteTask=async(req,res)=>{
     try{
-        const {userId}=req.auth || {}
+        const {userId}=req.auth() || {}
         const {tasksIds}=req.body
         const tasks=await prisma.task.findMany({
           where:{

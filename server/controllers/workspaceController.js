@@ -2,7 +2,7 @@ import prisma from "../configs/prisma.js";
 
 export const getUserWorkspaces = async (req, res) => {
   try {
-    const { userId } = req.auth;
+    const { userId } = req.auth();
     const workspaces = await prisma.workspace.findMany({
       where: {
         members: { some: { userId: userId } },
@@ -33,7 +33,7 @@ export const getUserWorkspaces = async (req, res) => {
 
 export const createWorkspace = async (req, res) => {
   try {
-    const { userId } = req.auth;
+    const { userId } = req.auth();
     const { name, organizationId } = req.body;
 
     if (!name || !organizationId) {
@@ -78,7 +78,7 @@ export const createWorkspace = async (req, res) => {
 
 export const addMember=async(req,res)=>{
     try{
-       const {userId}=req.auth;
+       const {userId}=req.auth();
        const {email,role,workspaceId,message}=req.body;
 
        const user=await prisma.user.findUnique({
