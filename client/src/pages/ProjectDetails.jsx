@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeftIcon, PlusIcon, SettingsIcon, BarChart3Icon, CalendarIcon, FileStackIcon, ZapIcon } from "lucide-react";
+import { ArrowLeftIcon, PlusIcon, SettingsIcon, BarChart3Icon, CalendarIcon, FileStackIcon, ZapIcon, LayoutGrid, List } from "lucide-react";
 import ProjectAnalytics from "../components/ProjectAnalytics";
 import ProjectSettings from "../components/ProjectSettings";
 import CreateTaskDialog from "../components/CreateTaskDialog";
 import ProjectCalendar from "../components/ProjectCalendar";
 import ProjectTasks from "../components/ProjectTasks";
+import KanbanBoard from "../components/KanbanBoard";
 
 export default function ProjectDetail() {
 
@@ -21,6 +22,7 @@ export default function ProjectDetail() {
     const [tasks, setTasks] = useState([]);
     const [showCreateTask, setShowCreateTask] = useState(false);
     const [activeTab, setActiveTab] = useState(tab || "tasks");
+    const [taskView, setTaskView] = useState("list"); // "list" or "kanban"
 
     useEffect(() => {
         if (tab) setActiveTab(tab);
@@ -111,7 +113,40 @@ export default function ProjectDetail() {
                 <div className="mt-6">
                     {activeTab === "tasks" && (
                         <div className=" dark:bg-zinc-900/40 rounded max-w-6xl">
-                            <ProjectTasks tasks={tasks} />
+                            {/* View Toggle */}
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center space-x-2">
+                                    <button
+                                        onClick={() => setTaskView("list")}
+                                        className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            taskView === "list"
+                                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                                        }`}
+                                    >
+                                        <List className="w-4 h-4 mr-2" />
+                                        List View
+                                    </button>
+                                    <button
+                                        onClick={() => setTaskView("kanban")}
+                                        className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            taskView === "kanban"
+                                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                                        }`}
+                                    >
+                                        <LayoutGrid className="w-4 h-4 mr-2" />
+                                        Kanban Board
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Task Views */}
+                            {taskView === "list" ? (
+                                <ProjectTasks tasks={tasks} />
+                            ) : (
+                                <KanbanBoard tasks={tasks} />
+                            )}
                         </div>
                     )}
                     {activeTab === "analytics" && (
