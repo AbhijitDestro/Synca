@@ -2,7 +2,7 @@
 import { MoveRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { SignedOut, SignedIn } from "@clerk/clerk-react";
+import { SignedOut, SignedIn, SignUpButton } from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom'
 
 export const CallToAction = () => {
@@ -45,9 +45,11 @@ export const CallToAction = () => {
         </div>
         <div className="flex justify-center gap-2 mt-10">
           <SignedOut>
+            <SignUpButton mode="modal">
           <button className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer">
             Get for Free
           </button>
+          </SignUpButton>
           </SignedOut>
           <SignedIn>
             <button onClick={() => navigate('/dashboard')} className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer">
