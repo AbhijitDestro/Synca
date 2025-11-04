@@ -30,6 +30,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
     return (
         <div ref={sidebarRef} className={`z-10 bg-white dark:bg-zinc-900 min-w-68 flex flex-col h-screen border-r border-gray-200 dark:border-zinc-800 max-sm:absolute transition-all ${isSidebarOpen ? 'left-0' : '-left-full'} `} >
+            <div className='flex items-center justify-start gap-2 py-5 px-7'>
+                <img src='/assets/logosaas.png' alt='logo' className='w-16 h-16' />
+                <h2 className='text-2xl font-bold text-gray-800 dark:text-zinc-100 tracking-wider'>Synca</h2>
+            </div>
             <WorkspaceDropdown />
             <hr className='border-gray-200 dark:border-zinc-800' />
             <div className='flex-1 overflow-y-scroll no-scrollbar flex flex-col'>
