@@ -2,6 +2,7 @@
 import { Check } from 'lucide-react'
 import {twMerge} from 'tailwind-merge'
 import { motion } from 'framer-motion'
+import { SignUpButton } from "@clerk/clerk-react";
 
 const pricingTiers = [
   {
@@ -64,7 +65,7 @@ export const Pricing = () => {
         </div>
         <div className='flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center'>
           {pricingTiers.map(({title, monthlyPrice, buttonText, popular,inverse, features}) => (
-            <div className={twMerge('p-10 rounded-3xl border border-[#222222]/10 [box-shadow:rgba(0,_0,_0,_0.3)_0px_19px_38px,_rgba(0,_0,_0,_0.22)_0px_15px_12px] max-w-sm w-full', inverse && 'border-black bg-black text-white')}>
+            <div key={title} className={twMerge('p-10 rounded-3xl border border-[#222222]/10 [box-shadow:rgba(0,_0,_0,_0.3)_0px_19px_38px,_rgba(0,_0,_0,_0.22)_0px_15px_12px] max-w-sm w-full', inverse && 'border-black bg-black text-white')}>
               <div className='flex justify-between'>
               <h3 className={twMerge('text-lg font-bold text-black/50', inverse && 'text-white/60')}>{title}</h3>
               {popular === true  && (
@@ -86,7 +87,20 @@ export const Pricing = () => {
                 <span className='text-4xl font-bold tracking-tighter leading-none'>${monthlyPrice}</span>
                 <span className={twMerge('tracking-tight font-bold text-black/50', inverse && 'text-white/60')}>/month</span>
                 </div>
-                <button className={twMerge('w-full bg-black text-white px-4 py-2 rounded-lg cursor-pointer mt-[30px]', inverse && 'bg-white text-black')}>{buttonText}</button>
+                {title === "Free" ? (
+                  <SignUpButton mode="modal">
+                    <button className={twMerge('w-full bg-black text-white px-4 py-2 rounded-lg cursor-pointer mt-[30px]', inverse && 'bg-white text-black')}>
+                      {buttonText}
+                    </button>
+                  </SignUpButton>
+                ) : (
+                  <button 
+                    className={twMerge('w-full bg-black text-white px-4 py-2 rounded-lg mt-[30px] opacity-50 cursor-not-allowed', inverse && 'bg-white text-black')} 
+                    disabled
+                  >
+                    {buttonText}
+                  </button>
+                )}
                 <ul className="flex flex-col gap-5 mt-8">
                   {features.map((feature) => (
                     <li className="text-sm flex items-center gap-4" key={feature}>
